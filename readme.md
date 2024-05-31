@@ -34,6 +34,7 @@ What things you need to install and how to install them:
 3. Install dependencies:
 `'flutter pub get'
 `
+4. If you have problem you can ask or contact me on email "danindraahmad@gmail.com"
 
 ## Usage
 

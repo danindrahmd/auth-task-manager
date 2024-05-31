@@ -1,6 +1,6 @@
 # TaskNizer
 
-Brief description of your project.
+This application is built using Flutter and Firebase, combining powerful frontend development with robust backend services. It serves as a comprehensive solution for user authentication and task management, providing a seamless user experience while managing tasks efficiently.
 
 ## Table of Contents
 

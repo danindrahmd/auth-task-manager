@@ -72,36 +72,63 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _addTask() async {
-    final taskTitle = _taskController.text;
-    if (taskTitle.isNotEmpty && user != null) {
-      final newTask = Task(
-        id: Uuid().v4(),
-        userId: user!.uid,
-        title: taskTitle,
-        documentId: '',
-        dueDate: _selectedDate,
-        startTime: DateTime(
-          _selectedDate.year,
-          _selectedDate.month,
-          _selectedDate.day,
-          _startTime.hour,
-          _startTime.minute,
-        ),
-        endTime: DateTime(
-          _selectedDate.year,
-          _selectedDate.month,
-          _selectedDate.day,
-          _endTime.hour,
-          _endTime.minute,
-        ),
-        color: _taskColor,  // Save the selected color
-      );
-      await _tasksCollection.add(newTask.toMap());
-      _taskController.clear();
-      setState(() {
-        _taskColor = Colors.white;  // Reset color after adding task
-      });
+    try {
+      final taskTitle = _taskController.text;
+      if (taskTitle.isNotEmpty && user != null) {
+        final newTask = Task(
+          id: Uuid().v4(),
+          userId: user!.uid,
+          title: taskTitle,
+          documentId: '',
+          dueDate: _selectedDate,
+          startTime: DateTime(
+            _selectedDate.year,
+            _selectedDate.month,
+            _selectedDate.day,
+            _startTime.hour,
+            _startTime.minute,
+          ),
+          endTime: DateTime(
+            _selectedDate.year,
+            _selectedDate.month,
+            _selectedDate.day,
+            _endTime.hour,
+            _endTime.minute,
+          ),
+          color: _taskColor,  // Save the selected color
+        );
+        await _tasksCollection.add(newTask.toMap());
+        _taskController.clear();
+        setState(() {
+          _taskColor = Colors.white;  // Reset color after adding task
+        });
+      } else {
+        throw Exception("Task title is empty or user is null");
+      }
+    } catch (e) {
+      print("Error adding task: $e");
+      _showErrorDialog("Oops! Something went wrong", "Something went wrong while adding your task. Please make sure you've entered the task title and try again.");
     }
+  }
+
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _toggleTaskCompletion(Task task) async {
@@ -233,7 +260,7 @@ class _HomePageState extends State<HomePage> {
             'Tasknizer',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 24,
+              fontSize: 35,
             ),
           ),
           actions: [
@@ -245,7 +272,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
               TextField(
@@ -267,7 +294,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   SizedBox(
-                    height: 40,
+                    height: 35,
                     child: TextButton(
                       onPressed: () => _selectDate(context),
                       child: Text('Choose Date'),
@@ -284,7 +311,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   SizedBox(
-                    height: 40,
+                    height: 35,
                     child: TextButton(
                       onPressed: () => _selectTime(context, true),
                       child: Text('Choose Start Time'),
@@ -310,7 +337,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   SizedBox(
-                    height: 40,
+                    height: 35,
                     child: TextButton(
                       onPressed: () => _selectColor(context),
                       child: Text('Choose Color'),

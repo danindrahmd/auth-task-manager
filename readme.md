@@ -52,6 +52,8 @@ To use Firebase services in this project, follow these steps:
 5. Download the `GoogleService-Info.plist` file for iOS and place it in the `ios/Runner` directory of your Flutter project.
 6. Follow any additional setup instructions provided by Firebase for the specific services you plan to use (e.g., Authentication, Firestore, etc.).
 
+## Screenshots
+
 ## Contributing
 
 If you'd like to contribute to this project, please follow the steps below:

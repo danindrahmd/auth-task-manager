@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "95862460828",
+    "project_id": "pbbfirebase-15958",
+    "storage_bucket": "pbbfirebase-15958.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95862460828:android:4f92c41c642a5f3694f859",
+        "android_client_info": {
+          "package_name": "com.example.firebasepbb"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgRChcNALF1FLt4GbJSmJM6Pa-TTBnh8U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95862460828:android:4d483bc35b50dd0994f859",
+        "android_client_info": {
+          "package_name": "com.example.modernlogintute"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgRChcNALF1FLt4GbJSmJM6Pa-TTBnh8U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

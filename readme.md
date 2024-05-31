@@ -34,6 +34,7 @@ What things you need to install and how to install them:
 3. Install dependencies:
 `'flutter pub get'
 `
+4. If you have problem you can ask or contact me on email "danindraahmad@gmail.com"
 
 ## Usage
 
@@ -72,7 +73,7 @@ If you'd like to contribute to this project, please follow the steps below:
 
 ## License
 
-This project is licensed under the [License Name] License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 
 

@@ -53,6 +53,12 @@ To use Firebase services in this project, follow these steps:
 6. Follow any additional setup instructions provided by Firebase for the specific services you plan to use (e.g., Authentication, Firestore, etc.).
 
 ## Screenshots
+<img width="414" alt="Screenshot 2024-05-31 at 22 22 17" src="https://github.com/danindrahmd/auth-task-manager/assets/91369024/3fb82946-a4f7-473f-838c-be9132dc55c8">
+<img width="414" alt="Screenshot 2024-05-31 at 22 22 45" src="https://github.com/danindrahmd/auth-task-manager/assets/91369024/63727e28-6926-40ea-8089-66c327c81472">
+<img width="416" alt="Screenshot 2024-05-31 at 22 23 44" src="https://github.com/danindrahmd/auth-task-manager/assets/91369024/82f088a1-acc8-4195-822f-ed977a16c4be">
+<img width="422" alt="Screenshot 2024-05-31 at 22 23 31" src="https://github.com/danindrahmd/auth-task-manager/assets/91369024/ad3ed02c-ea50-4d27-b6a1-171b52fe4172">
+<img width="395" alt="Screenshot 2024-05-31 at 22 24 05" src="https://github.com/danindrahmd/auth-task-manager/assets/91369024/8c6a65d6-5ff2-4c7a-8c2d-6af01cc9b7ed">
+<img width="403" alt="Screenshot 2024-05-31 at 22 24 23" src="https://github.com/danindrahmd/auth-task-manager/assets/91369024/998b47af-7c3b-4c8e-b4f0-bbf61f793698">
 
 ## Contributing
 

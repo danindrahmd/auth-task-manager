@@ -6,6 +6,8 @@ class Task {
   final String title;
   final bool isCompleted;
   final DateTime? dueDate; // New field for due date
+  final DateTime? startTime;
+  final DateTime? endTime;
 
   Task({
     required this.id,
@@ -14,15 +16,19 @@ class Task {
     required this.title,
     this.isCompleted = false,
     this.dueDate, // Initialize due date field
+    this.startTime,
+    this.endTime,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'userId': userId, // Include user ID in the map
+      'userId': userId,
       'title': title,
       'isCompleted': isCompleted,
       'dueDate': dueDate != null ? dueDate!.toIso8601String() : null,
+      'startTime': startTime != null ? startTime!.toIso8601String() : null,
+      'endTime': endTime != null ? endTime!.toIso8601String() : null,
     };
   }
 
@@ -30,11 +36,13 @@ class Task {
     return Task(
       id: map['id'],
       documentId: documentId,
-      userId: map['userId'], // Retrieve user ID from map
+      userId: map['userId'],
       title: map['title'],
       isCompleted: map['isCompleted'] ?? false,
       dueDate: map['dueDate'] != null ? DateTime.parse(map['dueDate']) : null,
-
+      startTime: map['startTime'] != null ? DateTime.parse(map['startTime']) : null,
+      endTime: map['endTime'] != null ? DateTime.parse(map['endTime']) : null,
     );
   }
+
 }

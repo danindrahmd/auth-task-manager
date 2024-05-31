@@ -1,4 +1,4 @@
-# Project Name
+# TaskNizer
 
 Brief description of your project.
 

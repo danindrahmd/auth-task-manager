@@ -26,20 +26,20 @@ What things you need to install and how to install them:
 ### Installation
 
 1. Clone the repository:
-'git clone https://github.com/danindrahmd/auth-task-manager'
-
+`'git clone https://github.com/danindrahmd/auth-task-manager'
+`
 2. Navigate to the project directory:
-'cd your-repository'
-
+`'cd your-repository'
+`
 3. Install dependencies:
-'flutter pub get'
-
+`'flutter pub get'
+`
 
 ## Usage
 
 Explain how to run the project:
-'''flutter run'''
-
+`flutter run
+`
 
 Add any additional usage instructions here.
 

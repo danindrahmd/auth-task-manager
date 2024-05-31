@@ -38,16 +38,17 @@ class Task {
   }
 
   factory Task.fromMap(Map<String, dynamic> map, String documentId) {
+    final String id = map['id'] ?? '';  // Provide a default value or handle null
     return Task(
-      id: map['id'],
+      id: id,
       documentId: documentId,
-      userId: map['userId'],
-      title: map['title'],
+      userId: map['userId'] ?? '',
+      title: map['title'] ?? '',
       isCompleted: map['isCompleted'] ?? false,
       dueDate: map['dueDate'] != null ? DateTime.parse(map['dueDate']) : null,
       startTime: map['startTime'] != null ? DateTime.parse(map['startTime']) : null,
       endTime: map['endTime'] != null ? DateTime.parse(map['endTime']) : null,
-      color: map['color'] != null ? Color(map['color']) : Colors.white,  // Handle null color
+      color: map['color'] != null ? Color(map['color']) : Colors.white,
     );
   }
 }

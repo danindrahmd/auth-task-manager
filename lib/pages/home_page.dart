@@ -1,9 +1,11 @@
+// lib/pages/home_page.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:modernlogintute/models/task.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';  // Import color picker package
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -19,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   late CollectionReference _tasksCollection;
   late TimeOfDay _startTime;
   late TimeOfDay _endTime;
+  Color _taskColor = Colors.white;  // Task color
 
   bool _isDarkMode = false;
 
@@ -34,8 +37,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _initialize() async {
     user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      _tasksCollection =
-          FirebaseFirestore.instance.collection('users/${user!.uid}/tasks');
+      _tasksCollection = FirebaseFirestore.instance.collection('users/${user!.uid}/tasks');
     }
   }
 
@@ -92,9 +94,13 @@ class _HomePageState extends State<HomePage> {
           _endTime.hour,
           _endTime.minute,
         ),
+        color: _taskColor,  // Save the selected color
       );
       await _tasksCollection.add(newTask.toMap());
       _taskController.clear();
+      setState(() {
+        _taskColor = Colors.white;  // Reset color after adding task
+      });
     }
   }
 
@@ -109,6 +115,7 @@ class _HomePageState extends State<HomePage> {
         dueDate: task.dueDate,
         startTime: task.startTime,
         endTime: task.endTime,
+        color: task.color,
       );
       await _tasksCollection.doc(task.documentId).update(updatedTask.toMap());
     }
@@ -125,6 +132,7 @@ class _HomePageState extends State<HomePage> {
       _isDarkMode = !_isDarkMode;
     });
   }
+
   Future<void> _selectTime(BuildContext context, bool isStartTime) async {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
@@ -153,12 +161,47 @@ class _HomePageState extends State<HomePage> {
         _selectedDate = pickedDate;
       });
   }
-  Color _backgroundColor = Colors.transparent; // Initial background color
+
+  Future<void> _selectColor(BuildContext context) async {
+    Color pickedColor = _taskColor;
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Select Task Color'),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: _taskColor,
+              onColorChanged: (color) => pickedColor = color,
+              showLabel: false,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _taskColor = pickedColor;
+                });
+                Navigator.pop(context);
+              },
+              child: Text('Select'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Color _backgroundColor = Colors.transparent;
 
   Widget _buildEndTimeRow() {
     return AnimatedContainer(
-      duration: Duration(milliseconds: 300), // Duration for the transition effect
-      color: _backgroundColor, // Set the background color dynamically
+      duration: Duration(milliseconds: 300),
+      color: _backgroundColor,
       child: Row(
         children: <Widget>[
           Expanded(
@@ -168,7 +211,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           SizedBox(
-            height: 35, // Adjust the height as needed
+            height: 35,
             child: TextButton(
               onPressed: () => _selectTime(context, false),
               child: Text('Choose End Time'),
@@ -249,11 +292,37 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-              _buildEndTimeRow(), // Use the new method to build the last row
+              _buildEndTimeRow(),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      'Task Color:',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: _taskColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: TextButton(
+                      onPressed: () => _selectColor(context),
+                      child: Text('Choose Color'),
+                    ),
+                  ),
+                ],
+              ),
               Expanded(
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: user != null ? _tasksCollection.orderBy('dueDate')
-                      .snapshots() : Stream.empty(),
+                  stream: user != null
+                      ? _tasksCollection.orderBy('dueDate').snapshots()
+                      : Stream.empty(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator());
@@ -269,7 +338,6 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
               ),
-
             ],
           ),
         ),
@@ -325,16 +393,14 @@ class _HomePageState extends State<HomePage> {
       fontSize: 18,
     );
 
-    if (date.year == today.year && date.month == today.month &&
-        date.day == today.day) {
+    if (date.year == today.year && date.month == today.month && date.day == today.day) {
       return ListTile(
         title: Text(
           'Today',
           style: headerStyle,
         ),
       );
-    } else if (date.year == today.year && date.month == today.month &&
-        date.day == today.day + 1) {
+    } else if (date.year == today.year && date.month == today.month && date.day == today.day + 1) {
       return ListTile(
         title: Text(
           'Tomorrow',
@@ -352,74 +418,72 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildTaskTile(Task task) {
-    return ListTile(
-      title: Text(
-        task.title,
-        style: TextStyle(
-          fontSize: 16,
-          decoration: task.isCompleted
-              ? TextDecoration.lineThrough
-              : TextDecoration.none,
-        ),
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (task.dueDate != null)
-            Text('Due: ${DateFormat.yMMMd().format(task.dueDate!)}'),
-          if (task.startTime != null && task.endTime != null) ...[
-            SizedBox(height: 8),
-            Row(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15.0), // Adjust the radius for smoothness
+        child: Container(
+          color: task.color,  // Set the background color for each task
+          child: ListTile(
+            title: Text(
+              task.title,
+              style: TextStyle(
+                fontSize: 16,
+                decoration: task.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+              ),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Start: ${DateFormat.jm().format(task.startTime!)}'),
-                SizedBox(width: 10),
-                Expanded(
-                  child: LinearProgressIndicator(
-                    value: _calculateProgress(
-                        task.startTime!, task.endTime!, task.startTime!),
-                    minHeight: 10,
+                if (task.dueDate != null) Text('Due: ${DateFormat.yMMMd().format(task.dueDate!)}'),
+                if (task.startTime != null && task.endTime != null) ...[
+                  SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Text('Start: ${DateFormat.jm().format(task.startTime!)}'),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: LinearProgressIndicator(
+                          value: _calculateProgress(task.startTime!, task.endTime!, DateTime.now()),
+                          minHeight: 10,
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Text('End: ${DateFormat.jm().format(task.endTime!)}'),
+                    ],
                   ),
-                ),
-                SizedBox(width: 10),
-                Text('End: ${DateFormat.jm().format(task.endTime!)}'),
+                ],
               ],
             ),
-          ],
-        ],
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: Icon(Icons.check),
-            onPressed: () => _toggleTaskCompletion(task),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.check),
+                  onPressed: () => _toggleTaskCompletion(task),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () => _deleteTask(task),
+                ),
+              ],
+            ),
           ),
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () => _deleteTask(task),
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  double _calculateProgress(DateTime startTime, DateTime endTime,
-      DateTime now) {
+
+  double _calculateProgress(DateTime startTime, DateTime endTime, DateTime now) {
     if (now.isBefore(startTime)) {
       return 0.0;
     } else if (now.isAfter(endTime)) {
       return 1.0;
     } else {
-      double totalDuration = endTime
-          .difference(startTime)
-          .inSeconds
-          .toDouble();
-      double currentDuration = now
-          .difference(startTime)
-          .inSeconds
-          .toDouble();
+      double totalDuration = endTime.difference(startTime).inSeconds.toDouble();
+      double currentDuration = now.difference(startTime).inSeconds.toDouble();
       return currentDuration / totalDuration;
     }
   }
 }
-

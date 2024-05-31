@@ -37,11 +37,9 @@ What things you need to install and how to install them:
 
 ## Usage
 
-Explain how to run the project:
+Run the project:
 `flutter run
 `
-
-Add any additional usage instructions here.
 
 ## Setting up Firebase
 

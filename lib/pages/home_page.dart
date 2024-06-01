@@ -451,55 +451,85 @@ class _HomePageState extends State<HomePage> {
         borderRadius: BorderRadius.circular(15.0), // Adjust the radius for smoothness
         child: Container(
           color: task.color,  // Set the background color for each task
-          child: ListTile(
-            title: Text(
-              task.title,
-              style: TextStyle(
-                fontSize: 16,
-                decoration: task.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+          height: 120, // Set a fixed height for the container
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ListTile(
+                title: Text(
+                  task.title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    decoration: task.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+                  ),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (task.dueDate != null) Text('Due: ${DateFormat.yMMMd().format(task.dueDate!)}'),
+                    if (task.startTime != null && task.endTime != null) ...[
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Text('Start: ${DateFormat.jm().format(task.startTime!)}'),
+                          SizedBox(width: 10),
+                          Text('End: ${DateFormat.jm().format(task.endTime!)}'),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.check),
+                      onPressed: () => _toggleTaskCompletion(task),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () => _deleteTask(task),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (task.dueDate != null) Text('Due: ${DateFormat.yMMMd().format(task.dueDate!)}'),
-                if (task.startTime != null && task.endTime != null) ...[
-                  SizedBox(height: 8),
-                  Row(
+              if (task.startTime != null && task.endTime != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Stack(
                     children: [
-                      Text('Start: ${DateFormat.jm().format(task.startTime!)}'),
-                      SizedBox(width: 10),
-                      Expanded(
+                      Container(
+                        width: double.infinity, // Take up all available width
                         child: LinearProgressIndicator(
                           value: _calculateProgress(task.startTime!, task.endTime!, DateTime.now()),
-                          minHeight: 10,
+                          minHeight: 15,
                         ),
                       ),
-                      SizedBox(width: 10),
-                      Text('End: ${DateFormat.jm().format(task.endTime!)}'),
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        bottom: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 4.0),
+                          child: Text(
+                            '${(_calculateProgress(task.startTime!, task.endTime!, DateTime.now()) * 100).toStringAsFixed(0)}%',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ],
-              ],
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.check),
-                  onPressed: () => _toggleTaskCompletion(task),
                 ),
-                IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () => _deleteTask(task),
-                ),
-              ],
-            ),
+            ],
           ),
         ),
       ),
     );
   }
+
 
 
   double _calculateProgress(DateTime startTime, DateTime endTime, DateTime now) {

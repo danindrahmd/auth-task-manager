@@ -1,11 +1,10 @@
-// lib/pages/home_page.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:modernlogintute/models/task.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';  // Import color picker package
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);

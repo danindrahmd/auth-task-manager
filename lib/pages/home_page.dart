@@ -515,7 +515,8 @@ class _HomePageState extends State<HomePage> {
                             '${(_calculateProgress(task.startTime!, task.endTime!, DateTime.now()) * 100).toStringAsFixed(0)}%',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.black,
+                              color: Colors.white,
+                                fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),

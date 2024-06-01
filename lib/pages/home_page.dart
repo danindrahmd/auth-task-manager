@@ -278,7 +278,7 @@ class _HomePageState extends State<HomePage> {
               TextField(
                 controller: _taskController,
                 decoration: InputDecoration(
-                  labelText: 'Add a task',
+                  labelText: 'Add a task (Title)',
                   suffixIcon: IconButton(
                     icon: Icon(Icons.add),
                     onPressed: _addTask,

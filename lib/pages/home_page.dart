@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'task_description.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -199,7 +200,7 @@ class _HomePageState extends State<HomePage> {
             child: ColorPicker(
               pickerColor: _taskColor,
               onColorChanged: (color) => pickedColor = color,
-              showLabel: false,
+              // showLabel: false,
             ),
           ),
           actions: [
@@ -444,86 +445,99 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildTaskTile(Task task) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15.0), // Adjust the radius for smoothness
-        child: Container(
-          color: task.color,  // Set the background color for each task
-          height: 120, // Set a fixed height for the container
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ListTile(
-                title: Text(
-                  task.title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    decoration: task.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TaskDescriptionPage(task: task),
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15.0), // Adjust the radius for smoothness
+          child: Container(
+            color: task.color,  // Set the background color for each task
+            height: 120, // Set a fixed height for the container
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  title: Flexible(
+                    child: Text(
+                      task.title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        decoration: task.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+                      ),
+                      overflow: TextOverflow.ellipsis, // Handle overflow
+                    ),
                   ),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (task.dueDate != null) Text('Due: ${DateFormat.yMMMd().format(task.dueDate!)}'),
-                    if (task.startTime != null && task.endTime != null) ...[
-                      SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Text('Start: ${DateFormat.jm().format(task.startTime!)}'),
-                          SizedBox(width: 10),
-                          Text('End: ${DateFormat.jm().format(task.endTime!)}'),
-                        ],
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (task.dueDate != null) Text('Due: ${DateFormat.yMMMd().format(task.dueDate!)}'),
+                      if (task.startTime != null && task.endTime != null) ...[
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Text('Start: ${DateFormat.jm().format(task.startTime!)}'),
+                            SizedBox(width: 10),
+                            Text('End: ${DateFormat.jm().format(task.endTime!)}'),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.check),
+                        onPressed: () => _toggleTaskCompletion(task),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () => _deleteTask(task),
                       ),
                     ],
-                  ],
+                  ),
                 ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.check),
-                      onPressed: () => _toggleTaskCompletion(task),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () => _deleteTask(task),
-                    ),
-                  ],
-                ),
-              ),
-              if (task.startTime != null && task.endTime != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: double.infinity, // Take up all available width
-                        child: LinearProgressIndicator(
-                          value: _calculateProgress(task.startTime!, task.endTime!, DateTime.now()),
-                          minHeight: 15,
+                if (task.startTime != null && task.endTime != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: double.infinity, // Take up all available width
+                          child: LinearProgressIndicator(
+                            value: _calculateProgress(task.startTime!, task.endTime!, DateTime.now()),
+                            minHeight: 15,
+                          ),
                         ),
-                      ),
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        bottom: 0,
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 4.0),
-                          child: Text(
-                            '${(_calculateProgress(task.startTime!, task.endTime!, DateTime.now()) * 100).toStringAsFixed(0)}%',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white,
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 4.0),
+                            child: Text(
+                              '${(_calculateProgress(task.startTime!, task.endTime!, DateTime.now()) * 100).toStringAsFixed(0)}%',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

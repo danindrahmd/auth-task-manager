@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:modernlogintute/models/task.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class TaskDescriptionPage extends StatefulWidget {
   final Task task;
@@ -55,44 +56,66 @@ class _TaskDescriptionPageState extends State<TaskDescriptionPage> {
       });
     }
   }
-
-  Future<void> _uploadFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result != null) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      try {
-        final file = result.files.single;
-        print('File name: ${file.name}');
-        print('File size: ${file.size}');
-
-        if (file.bytes == null) {
-          throw Exception('File bytes are null');
-        }
-
-        final fileName = '${user!.uid}/${DateTime.now().millisecondsSinceEpoch}_${file.name}';
-        final ref = firebase_storage.FirebaseStorage.instance.ref().child(fileName);
-
-        await ref.putData(file.bytes!);
-        String fileUrl = await ref.getDownloadURL();
-
-        setState(() {
-          _fileUrls.add(fileUrl);
-        });
-      } catch (e) {
-        print('Error uploading file: $e');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Error uploading file: $e'),
-        ));
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+  Future<void> _requestStoragePermission() async {
+    final storageStatus = await Permission.storage.request();
+    if (storageStatus == PermissionStatus.granted) {
+      // Permission granted, proceed with file picking
+      _uploadFile();
+    } else {
+      // Permission denied, show an informative message
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Storage permission is required to upload files. Please go to Settings and grant permission to this app.'),
+      ));
     }
   }
+
+  Future<void> _uploadFile() async {
+    final storageStatus = await Permission.storage.request();
+    if (storageStatus == PermissionStatus.granted) {
+      // Permission granted, proceed with file picking
+      FilePickerResult? result = await FilePicker.platform.pickFiles();
+      if (result != null) {
+        setState(() {
+          _isLoading = true;
+        });
+
+        try {
+          final file = result.files.single;
+          print('File name: ${file.name}');
+          print('File size: ${file.size}');
+
+          // Check if file bytes are available before proceeding
+          if (file.bytes == null) {
+            throw Exception('File bytes are null. Please try again.');
+          }
+
+          final fileName = '${user!.uid}/${DateTime.now().millisecondsSinceEpoch}_${file.name}';
+          final ref = firebase_storage.FirebaseStorage.instance.ref().child(fileName);
+
+          await ref.putData(file.bytes!);
+          String fileUrl = await ref.getDownloadURL();
+
+          setState(() {
+            _fileUrls.add(fileUrl);
+          });
+        } catch (e) {
+          print('Error uploading file: $e');
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Error uploading file: $e'),
+          ));
+        } finally {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    } else {
+      // Handle permission denial
+      _requestStoragePermission();
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
